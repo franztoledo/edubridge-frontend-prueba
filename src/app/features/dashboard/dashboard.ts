@@ -82,24 +82,24 @@ export class DashboardComponent implements OnInit {
 
     const isDocente = normalizedRole === UserRole.DOCENTE;
 
-    const studentsReq = this.http.get<any[]>('http://localhost:8081/api/students')
+    const studentsReq = this.http.get<any[]>('https://edubridge-backend-prueba-v2.onrender.com/api/students')
       .pipe(catchError(() => of([])));
 
     const coursesReq = isDocente
-      ? this.http.get<any[]>('http://localhost:8081/api/courses').pipe(catchError(() => of([])))
+      ? this.http.get<any[]>('https://edubridge-backend-prueba-v2.onrender.com/api/courses').pipe(catchError(() => of([])))
       : of([]);
 
     const teachersReq = isDocente
-      ? this.http.get<any[]>('http://localhost:8081/api/teachers').pipe(catchError(() => of([])))
+      ? this.http.get<any[]>('https://edubridge-backend-prueba-v2.onrender.com/api/teachers').pipe(catchError(() => of([])))
       : of([]);
 
     const enrollmentsReq = isDocente
-      ? this.http.get<any[]>('http://localhost:8081/api/enrollments').pipe(catchError(() => of([])))
-      : this.http.get<any[]>(`http://localhost:8081/api/enrollments/student/${userId}`).pipe(catchError(() => of([])));
+      ? this.http.get<any[]>('https://edubridge-backend-prueba-v2.onrender.com/api/enrollments').pipe(catchError(() => of([])))
+      : this.http.get<any[]>(`https://edubridge-backend-prueba-v2.onrender.com/api/enrollments/student/${userId}`).pipe(catchError(() => of([])));
 
     const gradesReq = isDocente
-      ? this.http.get<any[]>('http://localhost:8081/api/grades').pipe(catchError(() => of([])))
-      : this.http.get<any[]>(`http://localhost:8081/api/grades/student/${userId}`)
+      ? this.http.get<any[]>('https://edubridge-backend-prueba-v2.onrender.com/api/grades').pipe(catchError(() => of([])))
+      : this.http.get<any[]>(`https://edubridge-backend-prueba-v2.onrender.com/api/grades/student/${userId}`)
         .pipe(catchError(() => of([])));
 
     forkJoin({
@@ -169,8 +169,8 @@ export class DashboardComponent implements OnInit {
   private processAdminDashboard() {
     
     forkJoin({
-      allStudents: this.http.get<any[]>('http://localhost:8081/api/students').pipe(catchError(() => of([]))),
-      allCourses: this.http.get<any[]>('http://localhost:8081/api/courses').pipe(catchError(() => of([])))
+      allStudents: this.http.get<any[]>('https://edubridge-backend-prueba-v2.onrender.com/api/students').pipe(catchError(() => of([]))),
+      allCourses: this.http.get<any[]>('https://edubridge-backend-prueba-v2.onrender.com/api/courses').pipe(catchError(() => of([])))
     }).subscribe({
       next: (res) => {
         this.students = res.allStudents;
