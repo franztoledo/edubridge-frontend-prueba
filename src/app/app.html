@@ -1,0 +1,23 @@
+<div class="flex h-screen w-screen bg-[#F8FAFC] overflow-hidden font-inter text-left">
+  
+  <app-sidebar 
+    *ngIf="user && currentPage !== 'login'" 
+    [userName]="user.name" 
+    [userRole]="user.role"
+    [currentPage]="currentPage"
+    (setPage)="handlePageChange($event)"
+    (onLogout)="handleLogout()">
+  </app-sidebar>
+
+  <main class="flex-1 h-full overflow-y-auto relative bg-[#F8FAFC]">
+    <router-outlet (activate)="onActivate($event)"></router-outlet>
+  </main>
+
+  <app-chatbot 
+    *ngIf="user && currentPage !== 'login'"
+    (tutoriaCreada)="handleTutoriaCreada()">
+  </app-chatbot>
+
+  <app-toast-container></app-toast-container>
+
+</div>
