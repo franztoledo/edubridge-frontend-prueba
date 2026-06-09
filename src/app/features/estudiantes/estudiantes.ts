@@ -58,7 +58,7 @@ export class EstudiantesComponent implements OnInit {
     value: null
   };
 
-  private readonly API_URL = 'http://localhost:8081/api';
+  private readonly API_URL = 'https://edubridge-backend-prueba-v2.onrender.com/api';
 
   private breakpointObserver = inject(BreakpointObserver);
   private http = inject(HttpClient);

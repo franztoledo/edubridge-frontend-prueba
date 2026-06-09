@@ -19,7 +19,7 @@ import {
   templateUrl: './admin.html'
 })
 export class AdminComponent implements OnInit {
-  private readonly API_URL = 'http://localhost:8081/api';
+  private readonly API_URL = 'https://edubridge-backend-prueba-v2.onrender.com/api';
 
   activeTab = 'dashboard';
   configTab = 'general';
