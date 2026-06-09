@@ -57,13 +57,15 @@
 
     <div class="flex-1 p-8 md:p-16 flex flex-col justify-center bg-white">
       <div class="mb-10 text-left">
-        <h3 class="text-3xl font-black text-slate-800 tracking-tight">{{ isRecovering ? 'Recuperar contraseña' :
-          'Iniciar Sesión' }}</h3>
-        <p class="text-slate-400 text-sm font-medium mt-2">{{ isRecovering ? 'Te enviaremos instrucciones a tu correo.'
-          : 'Ingresa tus credenciales para acceder' }}</p>
+        <h3 class="text-3xl font-black text-slate-800 tracking-tight">
+          {{ isResetting ? 'Restablecer contraseña' : (isRecovering ? 'Recuperar contraseña' : 'Iniciar Sesión') }}
+        </h3>
+        <p class="text-slate-400 text-sm font-medium mt-2">
+          {{ isResetting ? 'Ingresa el código enviado y tu nueva contraseña.' : (isRecovering ? 'Te enviaremos instrucciones a tu correo.' : 'Ingresa tus credenciales para acceder') }}
+        </p>
       </div>
 
-      <div *ngIf="!isRecovering" class="flex bg-slate-100 p-1.5 rounded-2xl mb-8">
+      <div *ngIf="!isRecovering && !isResetting" class="flex bg-slate-100 p-1.5 rounded-2xl mb-8">
         <button type="button" (click)="setRole('estudiante')"
           [class]="role === 'estudiante' ? 'flex-1 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 bg-white text-blue-600 shadow-sm' : 'flex-1 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 text-slate-400 hover:text-slate-600'"><lucide-icon
             [img]="Users" [size]="14"></lucide-icon> Estudiante</button>
@@ -72,8 +74,8 @@
             [img]="BookOpen" [size]="14"></lucide-icon> Profesor</button>
       </div>
 
-      <form (submit)="isRecovering ? recoverPassword() : handleSubmit($event)" class="space-y-5 text-left">
-        <div>
+      <form (submit)="isResetting ? resetPassword() : (isRecovering ? recoverPassword() : handleSubmit($event))" class="space-y-5 text-left">
+        <div *ngIf="!isResetting">
           <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 mb-2 block">Correo
             Electrónico</label>
           <div class="relative">
@@ -85,7 +87,7 @@
           </div>
         </div>
 
-        <div *ngIf="!isRecovering">
+        <div *ngIf="!isRecovering && !isResetting">
           <label
             class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 mb-2 block">Contraseña</label>
           <div class="relative">
@@ -101,26 +103,79 @@
           </div>
         </div>
 
+        <!-- Campos para restablecer la contraseña si isResetting es verdadero -->
+        <div *ngIf="isResetting">
+          <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 mb-2 block">Código de Verificación</label>
+          <div class="relative">
+            <lucide-icon [img]="Lock" [size]="18"
+              class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300"></lucide-icon>
+            <input type="text" name="recoveryCode" required [disabled]="loading" [(ngModel)]="recoveryCode"
+              placeholder="Ingresa el código de 6 dígitos"
+              class="w-full bg-white border-2 border-slate-100 p-4 pl-12 rounded-2xl text-sm font-medium outline-none focus:border-blue-500 transition-all disabled:opacity-50" />
+          </div>
+        </div>
+
+        <div *ngIf="isResetting">
+          <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 mb-2 block">Nueva Contraseña</label>
+          <div class="relative">
+            <lucide-icon [img]="Lock" [size]="18"
+              class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300"></lucide-icon>
+            <input [type]="showNewPassword ? 'text' : 'password'" name="newPassword" required [disabled]="loading"
+              [(ngModel)]="newPassword" placeholder="••••••••"
+              class="w-full bg-white border-2 border-slate-100 p-4 pl-12 rounded-2xl text-sm font-medium outline-none focus:border-blue-500 transition-all disabled:opacity-50" />
+            <span
+              class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 cursor-pointer hover:text-slate-500 transition-colors"
+              (click)="toggleNewPassword()"><lucide-icon [img]="showNewPassword ? EyeOff : Eye"
+                [size]="18"></lucide-icon></span>
+          </div>
+        </div>
+
+        <div *ngIf="isResetting">
+          <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 mb-2 block">Confirmar Nueva Contraseña</label>
+          <div class="relative">
+            <lucide-icon [img]="Lock" [size]="18"
+              class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300"></lucide-icon>
+            <input [type]="showConfirmNewPassword ? 'text' : 'password'" name="confirmNewPassword" required [disabled]="loading"
+              [(ngModel)]="confirmNewPassword" placeholder="••••••••"
+              class="w-full bg-white border-2 border-slate-100 p-4 pl-12 rounded-2xl text-sm font-medium outline-none focus:border-blue-500 transition-all disabled:opacity-50" />
+            <span
+              class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 cursor-pointer hover:text-slate-500 transition-colors"
+              (click)="toggleConfirmNewPassword()"><lucide-icon [img]="showConfirmNewPassword ? EyeOff : Eye"
+                [size]="18"></lucide-icon></span>
+          </div>
+        </div>
+
         <div class="flex items-center justify-between px-1">
-          <label *ngIf="!isRecovering" class="flex items-center gap-2 cursor-pointer group">
+          <label *ngIf="!isRecovering && !isResetting" class="flex items-center gap-2 cursor-pointer group">
             <input type="checkbox" name="rememberMe" [(ngModel)]="rememberMe"
               class="w-4 h-4 rounded border-slate-200 text-blue-600 focus:ring-blue-500" />
             <span class="text-[11px] font-bold text-slate-500">Recordarme</span>
           </label>
-          <button type="button" (click)="toggleRecovery()"
+          
+          <button *ngIf="isRecovering && !isResetting" type="button" (click)="toggleRecovery()"
             class="text-[11px] font-black text-blue-600 uppercase tracking-widest hover:underline ml-auto">
-            {{ isRecovering ? 'Volver al Login' : '¿Olvidaste tu contraseña?' }}
+            Volver al Login
+          </button>
+          
+          <button *ngIf="isResetting" type="button" (click)="cancelRecovery()"
+            class="text-[11px] font-black text-blue-600 uppercase tracking-widest hover:underline ml-auto">
+            Cancelar
+          </button>
+
+          <button *ngIf="!isRecovering && !isResetting" type="button" (click)="toggleRecovery()"
+            class="text-[11px] font-black text-blue-600 uppercase tracking-widest hover:underline ml-auto">
+            ¿Olvidaste tu contraseña?
           </button>
         </div>
 
         <button type="submit" [disabled]="loading"
           class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-4 rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-xl hover:scale-[1.01] transition-all flex justify-center items-center gap-3">
           <span *ngIf="loading" class="animate-spin"><lucide-icon [img]="Loader2" [size]="16"></lucide-icon></span>
-          <span>{{ isRecovering ? 'Enviar instrucciones' : 'Iniciar Sesión' }}</span>
+          <span>{{ isResetting ? 'Restablecer contraseña' : (isRecovering ? 'Enviar instrucciones' : 'Iniciar Sesión') }}</span>
         </button>
       </form>
 
-      <div *ngIf="!isRecovering">
+      <div *ngIf="!isRecovering && !isResetting">
         <div class="my-8 flex items-center gap-4 text-slate-300">
           <div class="flex-1 h-[1px] bg-slate-100"></div><span
             class="text-[10px] font-black uppercase tracking-widest">O continúa con</span>

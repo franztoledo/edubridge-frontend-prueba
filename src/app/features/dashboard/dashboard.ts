@@ -386,7 +386,7 @@ export class DashboardComponent implements OnInit {
       }
 
     } else if (this.studentSummary) {
-      this.promedioCalculadoEstudiante = this.studentSummary.averageGrade || 0;
+      this.promedioCalculadoEstudiante = 0;
       this.tendenciaMensual = 'Estable';
     }
 

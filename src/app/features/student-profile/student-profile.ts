@@ -175,7 +175,7 @@ export class StudentProfileComponent implements OnInit {
           const sumaPromedios = this.academicGrades.reduce((acc, c) => acc + c.promedio, 0);
           this.promedioGeneralReal = sumaPromedios / this.academicGrades.length;
         } else {
-          this.promedioGeneralReal = this.selectedStudent?.averageGrade || 0;
+          this.promedioGeneralReal = 0;
         }
 
         this.cdr.detectChanges();
